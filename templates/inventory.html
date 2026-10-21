@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Inventory</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f2f7f6; margin: 0; color: #20332f; }
+        header { background: #087f70; color: white; padding: 20px 30px; }
+        header a { color: white; text-decoration: none; margin-right: 18px; }
+        main { max-width: 1100px; margin: 25px auto; padding: 20px; }
+        .panel { background: white; padding: 22px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 3px 12px #00000010; }
+        .search { display: flex; gap: 10px; }
+        input, button { box-sizing: border-box; padding: 11px; border: 1px solid #ccd8d5; border-radius: 6px; font-size: 14px; }
+        input { flex: 1; min-width: 0; }
+        button { background: #087f70; color: white; border: none; cursor: pointer; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e4ece9; }
+        th { background: #e4f2ef; }
+        .low { color: #b42318; font-weight: bold; }
+        .good { color: #087f70; font-weight: bold; }
+        .muted { color: #64746f; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Inventory Management</h1>
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/medicines">Medicines</a>
+        <a href="/suppliers">Suppliers</a>
+        <a href="/inventory">Inventory</a>
+    </nav>
+</header>
+
+<main>
+    <section class="panel">
+        <h2>Medicine Stock and Expiry</h2>
+        <p class="muted">
+            Stock is calculated from received purchase batches that have not expired.
+        </p>
+        <form action="/inventory" method="GET" class="search">
+            <input type="search" name="search" value="{{ search }}"
+                   placeholder="Search by medicine, brand or category">
+            <button type="submit">Search</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Inventory List</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Medicine</th>
+                        <th>Brand</th>
+                        <th>Category</th>
+                        <th>Price (₹)</th>
+                        <th>Available Stock</th>
+                        <th>Nearest Expiry</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in inventory %}
+                    <tr>
+                        <td>{{ item.medicine_id }}</td>
+                        <td>{{ item.medicine_name }}</td>
+                        <td>{{ item.brand or '-' }}</td>
+                        <td>{{ item.category_name }}</td>
+                        <td>{{ "%.2f"|format(item.selling_price) }}</td>
+                        <td>{{ item.available_stock }}</td>
+                        <td>{{ item.nearest_expiry or 'N/A' }}</td>
+                        <td>
+                            {% if item.available_stock <= item.reorder_level %}
+                                <span class="low">Low stock</span>
+                            {% else %}
+                                <span class="good">In stock</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="8">No inventory records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

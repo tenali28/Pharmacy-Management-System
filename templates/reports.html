@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Reports</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #243247;
+        }
+        header {
+            background: #163b65;
+            color: white;
+            padding: 22px 5%;
+        }
+        header h1 { margin: 0 0 8px; }
+        nav { display: flex; flex-wrap: wrap; gap: 16px; }
+        nav a { color: white; text-decoration: none; }
+        main { max-width: 1200px; margin: 28px auto; padding: 0 18px; }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        .card, section {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+        .card p { margin: 0 0 10px; color: #64748b; }
+        .card h2 { margin: 0; color: #163b65; }
+        section { margin-bottom: 24px; overflow-x: auto; }
+        h2 { margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th { background: #edf3f9; }
+        .empty { color: #64748b; }
+        footer { text-align: center; padding: 20px; color: #64748b; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Pharmacy Management System</h1>
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/medicines">Medicines</a>
+        <a href="/suppliers">Suppliers</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/sales">Sales</a>
+        <a href="/reports">Reports</a>
+    </nav>
+</header>
+
+<main>
+    <h2>Sales and Inventory Reports</h2>
+
+    <div class="cards">
+        <div class="card">
+            <p>Total Sales</p>
+            <h2>{{ summary.total_sales }}</h2>
+        </div>
+        <div class="card">
+            <p>Total Revenue</p>
+            <h2>₹{{ "%.2f"|format(summary.total_revenue) }}</h2>
+        </div>
+        <div class="card">
+            <p>Average Sale Value</p>
+            <h2>₹{{ "%.2f"|format(summary.average_sale) }}</h2>
+        </div>
+    </div>
+
+    <section>
+        <h2>Medicine Sales Summary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Quantity Sold</th>
+                    <th>Sales Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in medicine_report %}
+                <tr>
+                    <td>{{ item.medicine_name }}</td>
+                    <td>{{ item.quantity_sold }}</td>
+                    <td>{{ "%.2f"|format(item.sales_amount) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="empty">No medicine sales recorded.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Daily Sales Summary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Number of Sales</th>
+                    <th>Revenue (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in daily_report %}
+                <tr>
+                    <td>{{ day.sale_day }}</td>
+                    <td>{{ day.number_of_sales }}</td>
+                    <td>{{ "%.2f"|format(day.daily_revenue) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" class="empty">No sales recorded.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer>DBMS Laboratory Project — Pharmacy Management System</footer>
+</body>
+</html>

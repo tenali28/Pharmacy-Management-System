@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f2f7f6; margin: 0; color: #20332f; }
+        header { background: #087f70; color: white; padding: 20px 30px; }
+        header a { color: white; margin-right: 18px; text-decoration: none; }
+        main { max-width: 1100px; margin: 25px auto; padding: 20px; }
+        .panel { background: white; padding: 22px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 3px 12px #00000010; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+        input, button { box-sizing: border-box; width: 100%; padding: 11px; border: 1px solid #ccd8d5; border-radius: 6px; font-size: 14px; }
+        button { background: #087f70; color: white; border: none; cursor: pointer; font-weight: bold; }
+        .search { display: flex; gap: 10px; }
+        .search input { flex: 1; }
+        .search button { width: 120px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 11px; border-bottom: 1px solid #e4ece9; }
+        th { background: #e4f2ef; }
+        .message { color: #087f70; font-weight: bold; }
+        .error { color: #b42318; font-weight: bold; }
+        .actions button { background: #b42318; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Supplier Management</h1>
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/medicines">Medicines</a>
+        <a href="/suppliers">Suppliers</a>
+    </nav>
+</header>
+
+<main>
+    {% if message %}<p class="message">{{ message }}</p>{% endif %}
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+    <section class="panel">
+        <h2>Add New Supplier</h2>
+        <form action="/suppliers/add" method="POST">
+            <div class="grid">
+                <input name="supplier_name" placeholder="Supplier name" maxlength="150" required>
+                <input name="phone" placeholder="Phone number" maxlength="15" required>
+                <input name="email" type="email" placeholder="Email address" maxlength="100">
+                <input name="address" placeholder="Address" maxlength="255">
+            </div>
+            <p><button type="submit">Add Supplier</button></p>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Search Suppliers</h2>
+        <form action="/suppliers" method="GET" class="search">
+            <input name="search" value="{{ search }}" placeholder="Search by name or phone">
+            <button type="submit">Search</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Supplier List</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Supplier</th><th>Phone</th>
+                        <th>Email</th><th>Address</th><th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td>{{ supplier.supplier_id }}</td>
+                        <td>{{ supplier.supplier_name }}</td>
+                        <td>{{ supplier.phone }}</td>
+                        <td>{{ supplier.email or '-' }}</td>
+                        <td>{{ supplier.address or '-' }}</td>
+                        <td>
+                            <form class="actions"
+                                  action="{{ url_for('delete_supplier', supplier_id=supplier.supplier_id) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Delete this supplier? Suppliers linked to purchases cannot be deleted.');">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6">No suppliers found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

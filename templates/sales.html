@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f2f7f6; margin: 0; color: #20332f; }
+        header { background: #087f70; color: white; padding: 20px 30px; }
+        header a { color: white; margin-right: 18px; text-decoration: none; }
+        main { max-width: 1100px; margin: 25px auto; padding: 20px; }
+        .panel { background: white; padding: 22px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 3px 12px #00000010; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+        input, select, button { box-sizing: border-box; width: 100%; padding: 11px; border: 1px solid #ccd8d5; border-radius: 6px; font-size: 14px; }
+        button { background: #087f70; color: white; border: none; cursor: pointer; font-weight: bold; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 11px; border-bottom: 1px solid #e4ece9; }
+        th { background: #e4f2ef; }
+        .message { color: #087f70; font-weight: bold; }
+        .error { color: #b42318; font-weight: bold; }
+        .muted { color: #64746f; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Sales Management</h1>
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/medicines">Medicines</a>
+        <a href="/suppliers">Suppliers</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/sales">Sales</a>
+        <a href="/reports">Reports</a>
+    </nav>
+</header>
+
+<main>
+    {% if message %}<p class="message">{{ message }}</p>{% endif %}
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+    <section class="panel">
+        <h2>Record a Sale</h2>
+        <p class="muted">Choose an available medicine batch and enter the quantity sold.</p>
+
+        <form action="/sales/add" method="POST">
+            <div class="grid">
+                <input name="customer_name" placeholder="Customer name (optional)" maxlength="150">
+
+                <select name="payment_method" required>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Card">Card</option>
+                </select>
+
+                <select name="purchase_item_id" required>
+                    <option value="">Select medicine batch</option>
+                    {% for batch in batches %}
+                    <option value="{{ batch.purchase_item_id }}">
+                        {{ batch.medicine_name }} — Batch {{ batch.batch_number }}
+                        (Stock: {{ batch.quantity_remaining }}, ₹{{ batch.selling_price }})
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <input name="quantity" type="number" min="1" step="1"
+                       placeholder="Quantity sold" required>
+            </div>
+            <p><button type="submit">Record Sale</button></p>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Recent Sales</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sale ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Payment</th>
+                        <th>Total (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.sale_id }}</td>
+                        <td>{{ sale.sale_date }}</td>
+                        <td>{{ sale.customer_name }}</td>
+                        <td>{{ sale.payment_method }}</td>
+                        <td>{{ "%.2f"|format(sale.total_amount) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5">No sales recorded yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Medicine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f7f6;
+            color: #20332f;
+            margin: 0;
+        }
+        header {
+            background: #087f70;
+            color: white;
+            padding: 20px 30px;
+        }
+        header a { color: white; text-decoration: none; }
+        main {
+            max-width: 700px;
+            margin: 35px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+        label { display: block; margin-top: 16px; font-weight: bold; }
+        input, select, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccd8d5;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        button {
+            background: #087f70;
+            color: white;
+            border: none;
+            margin-top: 22px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .cancel {
+            display: inline-block;
+            margin-top: 18px;
+            color: #087f70;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Edit Medicine</h1>
+    <a href="/medicines">← Back to Medicine Management</a>
+</header>
+
+<main>
+    <h2>Update Medicine Details</h2>
+
+    <form method="POST">
+        <label for="medicine_name">Medicine Name</label>
+        <input id="medicine_name" name="medicine_name"
+               maxlength="150" value="{{ medicine.medicine_name }}" required>
+
+        <label for="brand">Brand</label>
+        <input id="brand" name="brand" maxlength="100"
+               value="{{ medicine.brand or '' }}">
+
+        <label for="category_id">Category</label>
+        <select id="category_id" name="category_id" required>
+            {% for category in categories %}
+            <option value="{{ category.category_id }}"
+                {% if category.category_id == medicine.category_id %}selected{% endif %}>
+                {{ category.category_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="unit">Unit</label>
+        <select id="unit" name="unit" required>
+            {% for unit_option in ['Strip', 'Bottle', 'Tube', 'Tablet', 'Piece'] %}
+            <option value="{{ unit_option }}"
+                {% if unit_option == medicine.unit %}selected{% endif %}>
+                {{ unit_option }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="selling_price">Selling Price (₹)</label>
+        <input id="selling_price" name="selling_price" type="number"
+               min="0" max="99999999.99" step="0.01"
+               value="{{ medicine.selling_price }}" required>
+
+        <label for="reorder_level">Reorder Level</label>
+        <input id="reorder_level" name="reorder_level" type="number"
+               min="0" step="1" value="{{ medicine.reorder_level }}" required>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a class="cancel" href="/medicines">Cancel and go back</a>
+</main>
+</body>
+</html>

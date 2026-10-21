@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f2f7f6; margin: 0; color: #20332f; }
+        header { background: #087f70; color: white; padding: 20px 30px; }
+        header a { color: white; margin-right: 18px; text-decoration: none; }
+        main { max-width: 1150px; margin: 25px auto; padding: 20px; }
+        .panel { background: white; padding: 22px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 3px 12px #00000010; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+        input, select, button { box-sizing: border-box; width: 100%; padding: 11px; border: 1px solid #ccd8d5; border-radius: 6px; font-size: 14px; }
+        button { background: #087f70; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #06695d; }
+        .search-row { display: flex; gap: 10px; }
+        .search-row input { flex: 1; }
+        .search-row button { width: 120px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { text-align: left; padding: 11px; border-bottom: 1px solid #e4ece9; }
+        th { background: #e4f2ef; }
+        .table-wrap { overflow-x: auto; }
+        .message { color: #087f70; font-weight: bold; }
+        .error { color: #b42318; font-weight: bold; }
+        .secondary { display: inline-block; margin-top: 12px; color: #087f70; }
+        .actions { display: flex; gap: 8px; }
+        .actions a { display: inline-block; background: #2867a8; color: white; padding: 8px 10px; border-radius: 5px; text-decoration: none; }
+        .actions button { background: #b42318; padding: 8px 10px; }
+        .actions form { margin: 0; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Medicine Management</h1>
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/medicines">Medicines</a>
+    </nav>
+</header>
+
+<main>
+    {% if message %}<p class="message">{{ message }}</p>{% endif %}
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+    <section class="panel">
+        <h2>Add New Medicine</h2>
+        <form action="/medicines/add" method="POST">
+            <div class="form-grid">
+                <input name="medicine_name" placeholder="Medicine name" maxlength="150" required>
+                <input name="brand" placeholder="Brand" maxlength="100">
+
+                <select name="category_id" required>
+                    <option value="">Select category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="unit" required>
+                    <option value="Strip">Strip</option>
+                    <option value="Bottle">Bottle</option>
+                    <option value="Tube">Tube</option>
+                    <option value="Tablet">Tablet</option>
+                    <option value="Piece">Piece</option>
+                </select>
+
+                <input name="selling_price" type="number" min="0" max="99999999.99" step="0.01" placeholder="Selling price (₹)" required>
+                <input name="reorder_level" type="number" min="0" step="1" value="10" placeholder="Reorder level" required>
+            </div>
+            <p><button type="submit">Add Medicine</button></p>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Search Medicines</h2>
+        <form action="/medicines" method="GET" class="search-row">
+            <input type="search" name="search" value="{{ search }}" placeholder="Search by medicine or brand">
+            <button type="submit">Search</button>
+        </form>
+        <a class="secondary" href="/medicines">Show all medicines</a>
+    </section>
+
+    <section class="panel">
+        <h2>Medicine List</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Medicine</th><th>Brand</th>
+                        <th>Category</th><th>Unit</th><th>Price (₹)</th>
+                        <th>Reorder</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr>
+                        <td>{{ medicine.medicine_id }}</td>
+                        <td>{{ medicine.medicine_name }}</td>
+                        <td>{{ medicine.brand or '-' }}</td>
+                        <td>{{ medicine.category_name }}</td>
+                        <td>{{ medicine.unit }}</td>
+                        <td>{{ "%.2f"|format(medicine.selling_price) }}</td>
+                        <td>{{ medicine.reorder_level }}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{{ url_for('edit_medicine', medicine_id=medicine.medicine_id) }}">Edit</a>
+                                <form action="{{ url_for('delete_medicine', medicine_id=medicine.medicine_id) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Delete this medicine? If it has purchase records, deletion will be blocked.');">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="8">No medicines found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

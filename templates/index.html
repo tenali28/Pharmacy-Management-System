@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Management System - Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+        }
+
+        /* Header */
+        header {
+            padding: 28px 32px;
+            background: linear-gradient(135deg, #0f766e, #115e59);
+            color: white;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        header p {
+            margin: 0;
+            color: #ccfbf1;
+            font-size: 15px;
+        }
+
+        /* Navigation bar */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding: 14px 28px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        nav a {
+            display: inline-block;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        nav a:hover {
+            background: #ccfbf1;
+            color: #115e59;
+        }
+
+        /* Logged-in user and logout */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .user-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-dot {
+            width: 9px;
+            height: 9px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: #16a34a;
+            box-shadow: 0 0 0 3px #dcfce7;
+        }
+
+        .user-actions form {
+            margin: 0;
+        }
+
+        .logout-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 1px solid #fecaca;
+            border-radius: 9px;
+            background: #fff1f2;
+            color: #be123c;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease,
+                        color 0.2s ease,
+                        transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #be123c;
+            border-color: #be123c;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(190, 18, 60, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .logout-btn:focus-visible {
+            outline: 3px solid #fda4af;
+            outline-offset: 3px;
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Main dashboard */
+        main {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 28px;
+        }
+
+        main h2 {
+            margin: 0 0 24px;
+            color: #0f172a;
+            font-size: 25px;
+        }
+
+        /* Dashboard cards */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            padding: 24px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+            transition: transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .card::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #0f766e;
+            content: "";
+        }
+
+        .card h3 {
+            margin: 0 0 18px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .value {
+            color: #0f766e;
+            font-size: 30px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 48px;
+            padding: 22px 16px;
+            border-top: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #64748b;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* Tablet */
+        @media (max-width: 1000px) {
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            nav {
+                align-items: flex-start;
+            }
+
+            .user-actions {
+                margin-left: auto;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 560px) {
+            header {
+                padding: 24px 18px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            nav {
+                padding: 12px 14px;
+            }
+
+            .nav-links {
+                width: 100%;
+            }
+
+            nav a {
+                padding: 9px;
+                font-size: 13px;
+            }
+
+            .user-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            main {
+                margin: 24px auto;
+                padding: 0 16px;
+            }
+
+            main h2 {
+                font-size: 22px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Pharmacy Management System</h1>
+        <p>Medicine, Inventory and Sales Dashboard</p>
+    </header>
+
+    <nav>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('medicines') }}">Medicines</a>
+            <a href="{{ url_for('suppliers') }}">Suppliers</a>
+            <a href="{{ url_for('inventory') }}">Inventory</a>
+            <a href="{{ url_for('sales') }}">Sales</a>
+            <a href="{{ url_for('reports') }}">Reports</a>
+        </div>
+
+        {% if session.get('username') %}
+        <div class="user-actions">
+            <span class="user-label">
+                <span class="user-dot"></span>
+                {{ session.get('username') }}
+            </span>
+
+            <form method="POST" action="{{ url_for('logout') }}">
+                <button type="submit" class="logout-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="17"
+                         height="17"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5
+                                 a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </nav>
+
+    <main>
+        <h2>Dashboard Overview</h2>
+
+        <section class="cards">
+            <div class="card">
+                <h3>Total Medicines</h3>
+                <div class="value">{{ total_medicines }}</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Suppliers</h3>
+                <div class="value">{{ total_suppliers }}</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Sales</h3>
+                <div class="value">{{ total_sales }}</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Sales Revenue</h3>
+                <div class="value">
+                    ₹{{ "%.2f"|format(revenue|float) }}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        DBMS Laboratory Project — Pharmacy Management System
+    </footer>
+
+</body>
+</html>

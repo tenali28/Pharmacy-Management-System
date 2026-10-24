@@ -80,8 +80,10 @@ def login():
 
                 destination = request.args.get("next", "")
 
-                # Only allow local application paths.
-                if destination.startswith("/") and not destination.startswith("//"):
+                if (
+                    destination.startswith("/")
+                    and not destination.startswith("//")
+                ):
                     return redirect(destination)
 
                 return redirect(url_for("dashboard"))
@@ -734,4 +736,4 @@ def reports():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

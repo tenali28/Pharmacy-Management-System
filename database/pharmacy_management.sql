@@ -407,3 +407,12 @@ JOIN Medicine m
     ON pi.medicine_id = m.medicine_id
 GROUP BY m.medicine_id, m.medicine_name
 ORDER BY sales_amount DESC;
+CREATE TABLE IF NOT EXISTS AdminUser (
+    admin_id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (admin_id),
+    UNIQUE KEY username (username)
+);
